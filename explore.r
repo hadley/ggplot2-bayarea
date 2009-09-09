@@ -1,12 +1,11 @@
 library(ggplot2)
 load("geo.rdata")
 
-precise <- c(
-  "QUALITY_ADDRESS_RANGE_INTERPOLATION", "QUALITY_EXACT_PARCEL_CENTROID")
+precise_qual <- c(
+  "QUALITY_ADDRESS_RANGE_INTERPOLATION", "QUALITY_EXACT_PARCEL_CENTROID",
+  "gpsvisualizer")
 
-sf <- subset(geo, city == "San Francisco" & quality %in% precise)
-berkeley <- subset(geo, city == "Berkeley" & quality %in% precise)
-
+precise <- subset(geo, quality %in% precise_qual)
 
 labels <- list(
   labs(x = NULL, y = NULL),
@@ -14,36 +13,50 @@ labels <- list(
   opts(axis.text.y = theme_blank())
 )
 
+no_border <- opts(
+ plot.margin = unit(rep(0, 4), "cm"),
+ axis.text.x = theme_blank(),
+ axis.text.y = theme_blank(),
+ axis.title.x = theme_blank(),
+ axis.title.y = theme_blank(),
+ axis.ticks.length = unit(0, "cm"),
+ axis.ticks.margin = unit(0, "cm"),
+ legend.position = "none"
+)
+
+# Plot illustrating entire data set
+
+all <- qplot(long, lat, data = precise, shape = I("."), alpha = I(1/10)) + no_border + xlim(min(precise$long), -121.0) + ylim(36.5, max(precise$lat))
+ggsave("location-all.png", all, width = 6, height = 6, dpi = 128)
+
+sf <- subset(precise, city == "San Francisco")
+berkeley <- subset(precise, city == "Berkeley")
+
+
 # Scatterplots ---------------------------------------------------------------
 
 ggplot(sf, aes(long, lat)) + 
-  geom_point(size = 0.5, stat = "unique") + 
-  labels
+  geom_point(size = 0.5, stat = "unique")
+ggsave("sf.png", width = 6, height = 6, dpi = 128)
 
 # In principle:
 ggplot(sf, aes(long, lat)) + 
-  geom_point(stat = "sum") + 
-  labels
+  geom_point(stat = "sum")
 
-# In practice:
-system.time(sfsum <- ddply(sf, c("lat", "long"), summarise,
+# In practice:  (takes 42 seconds)
+sfsum <- ddply(sf, c("lat", "long"), summarise,
   n = length(lat), 
   avg_year = mean(year, na.rm = TRUE), 
   .progress = "text"
-))
-
-
-system.time(sfsum <- ddply(sf[, -10], c("lat", "long"), summarise,
-  n = length(lat), 
-  avg_year = mean(year, na.rm = TRUE), 
-  .progress = "text"
-))
-save(sfsum, file = "sf.rdata")
-
-ggplot(locsum, aes(long, lat, size = n)) + 
+)
+ggplot(sfsum, aes(long, lat, size = n)) + 
   geom_point(alpha = 1/2) + 
-  scale_area(to = c(0.3, 6), breaks = c(1, 50, 100, 200, 252)) +
-  labels
+  scale_area(to = c(0.3, 6), breaks = c(1, 50, 100, 200, 250, 252))
+ggsave("sf-sum.png", width = 6, height = 6, dpi = 128, drop = "legend_box")
+ggsave("sf-sum-leg.png", width = 1, height = 2, dpi = 128, keep = "legend_box")
+
+biggest <- subset(sfsum, n == max(n))
+biggest_locs <- subset(sf, lat == biggest$lat & long == biggest$long)
 
 # Histograms -----------------------------------------------------------------
 
