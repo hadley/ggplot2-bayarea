@@ -1,0 +1,27 @@
+Housing crisis
+
+Aim: illustrate basics of ggplot2 + plyr, in the context of a exploration of the housing crisis in the bay area.  (Plus taste of what's next)
+
+Intro to data.
+Little bit about collection.
+
+Basic plots:
+  * scatterplot of lat vs long
+    * counts (ideal, then actual)
+    * overlays
+  * histogram of year
+  
+  * how can we combine them? how do we add extra attributes? 
+    how are year and location related?
+    
+    * scatterplot + facetting
+    * scatterplot + summary + aesthetics
+    
+  * time series
+  
+Plyr
+  * deseasonalise, smooth, index
+  * faceting
+  
+
+Pointer to beautiful data, ggplot2 books.
