@@ -49,43 +49,42 @@ sfsum <- ddply(sf, c("lat", "long"), summarise,
   avg_year = mean(year, na.rm = TRUE), 
   .progress = "text"
 )
-ggplot(sfsum, aes(long, lat, size = n)) + 
-  geom_point(alpha = 1/2) + 
-  scale_area(to = c(0.3, 6), breaks = c(1, 50, 100, 200, 250, 252))
-ggsave("sf-sum.png", width = 6, height = 6, dpi = 128, drop = "legend_box")
-ggsave("sf-sum-leg.png", width = 1, height = 2, dpi = 128, keep = "legend_box")
-
 biggest <- subset(sfsum, n == max(n))
 biggest_locs <- subset(sf, lat == biggest$lat & long == biggest$long)
 
 # Histograms -----------------------------------------------------------------
 
 qplot(year, data = sf, binwidth = 10)
+ggsave("year-10.png", width = 8, height = 6, dpi = 128)
 qplot(year, data = sf, binwidth = 1)
+ggsave("year-1.png", width = 8, height = 6, dpi = 128)
+qplot(year %% 10, data = sf, binwidth = 1)
+ggsave("year-mod-10.png", width = 8, height = 6, dpi = 128)
 
 # Missing values
 qplot(factor(br), data = sf)
+ggsave("bedrooms.png", width = 8, height = 6, dpi = 128)
 
 # Explore relationship between age and location ------------------------------
 
-sf$sect <- cut_number(sf$year, n = 6)
+ggplot(sfsum, aes(long, lat, colour = avg_year)) + 
+  geom_point(alpha = 1/2, size = 2)
+ggsave("sf-year.png", width = 6, height = 6, dpi = 128)
+
+# Didn't work so well.  Let's try facetting.  
+# Facetting requires a categorical variable, so we'll make that first.
+
+sf$sect <- cut_number(sf$year, n = 5, dig.lab = 4)
 qplot(year, data = sf, binwidth = 1, fill = sect)
+ggsave("year-cut-6.png", width = 8, height = 6, dpi = 128)
 
-ggplot(subset(sf, !is.na(year)), aes(long, lat, size = n)) + 
-  geom_point(stat = "unique", colour = alpha("black", 0.5)) + 
-  scale_area(to = c(0.3, 4), breaks = c(1, 50, 100, 200, 252)) +
-  labels + facet_wrap(~ sect)
+sfsumsect <- ddply(sf, c("lat", "long" , "sect"), "nrow", .progress = "text")
 
-ggplot(locsum, aes(long, lat, colour = avg_year)) + 
-  geom_point(alpha = 1/2, size = 2) + 
-  labels
-ggplot(locsum, aes(long, lat, colour = avg_year)) + 
-  geom_point(alpha = 1 / 4, size = 3) +  
-  scale_colour_gradient(low = "yellow", high = "blue") + 
-  labels
-
-# interactive
-
+ggplot(sfsumsect, aes(long, lat, size = nrow)) + 
+  geom_point(colour = alpha("black", 0.5)) + 
+  scale_area(to = c(0.5, 3)) +
+  facet_wrap(~ sect)
+ggsave("sf-average-year.png", width = 8, height = 6, dpi = 128)
 
 # Time series ----------------------------------------------------------------
 
