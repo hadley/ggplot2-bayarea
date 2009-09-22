@@ -1,0 +1,1 @@
+The code for this presentation requires plyr version 0.1.0, which is currently only available from http://github.com/hadley/plyr/.  Unfortunately plyr 0.1 is not compatible with ggplot2 0.8.3, but I'm working on a fix!
