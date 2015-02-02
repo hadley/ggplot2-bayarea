@@ -49,7 +49,7 @@ ggsave("year-cut-6.png", width = 8, height = 6, dpi = 128)
 sfsumsect <- ddply(sf, c("lat", "long" , "sect"), "nrow", .progress = "text")
 
 ggplot(sfsumsect, aes(long, lat, size = nrow)) + 
-  geom_point(colour = alpha("black", 0.5)) + 
-  scale_area(to = c(0.5, 3)) +
+  geom_point(colour = I("black"), alpha= I(0.5)) + 
+  scale_size_area() +
   facet_wrap(~ sect)
 ggsave("sf-average-year.png", width = 8, height = 6, dpi = 128)
