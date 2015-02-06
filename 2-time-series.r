@@ -37,15 +37,15 @@ ggsave(file = "cities-index.png", width = 8, height = 6, dpi = 128)
 
 # Show location of peak and plummet
 brentwood <- subset(bigsum, city == "Brentwood")
-brendwood_sum <- subset(brentwood, as.character(date) %in% c("2006-02-05", "2008-11-09")
+brentwood_sum <- subset(brentwood, as.character(date) %in% c("2006-01-15", "2006-06-04"))
 ggplot(brentwood, aes(date, price_si)) +
   geom_line() + 
-  geom_point(data = brentwood_sum), colour = "red", size = 5)
+  geom_point(data = brentwood_sum, colour = "red", size = 5)
 ggsave("brentwood.png", width = 8, height = 6, dpi = 128)
 
 covar <- ddply(bigsum, "city", summarise,
-  peak = price_si[date == "2006-02-05"],
-  plummet = price_si[date == "2008-11-09"]
+  peak = price_si[date == "2006-01-15"],
+  plummet = price_si[date == "2006-06-04"]
 )
 
 ggplot(covar, aes(peak, plummet)) + 

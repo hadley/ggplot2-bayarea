@@ -3,14 +3,14 @@ load("precise.rdata")
 
 # Plot illustrating entire data set
 
-no_border <- opts(
- plot.margin = unit(rep(0, 4), "cm"),
- axis.text.x = theme_blank(),
- axis.text.y = theme_blank(),
- axis.title.x = theme_blank(),
- axis.title.y = theme_blank(),
- axis.ticks.length = unit(0, "cm"),
- axis.ticks.margin = unit(0, "cm"),
+no_border <- theme(
+ plot.margin = grid::unit(rep(0, 4), "cm"),
+ axis.text.x = element_blank(),
+ axis.text.y = element_blank(),
+ axis.title.x = element_blank(),
+ axis.title.y = element_blank(),
+ axis.ticks.length = grid::unit(0, "cm"),
+ axis.ticks.margin = grid::unit(0, "cm"),
  legend.position = "none"
 )
 
